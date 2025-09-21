@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get the 3 most recent blog posts
+const allPosts = await getCollection('blog');
+const recentPosts = allPosts
+  .sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf())
+  .slice(0, 3);
+---
+
+<section id="blog" class="py-16 bg-white">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Latest Blog Posts</h2>
+    
+    {recentPosts.length > 0 ? (
+      <div class="space-y-8">
+        {recentPosts.map((post) => (
+          <article class="border-l-4 border-blue-500 pl-6 hover:bg-gray-50 transition-colors p-4 -ml-4 rounded-r-lg">
+            <div class="flex items-center gap-4 text-sm text-gray-500 mb-2">
+              <time>{new Date(post.data.publishDate).toLocaleDateString()}</time>
+              <span>•</span>
+              <span>5 min read</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">
+              <a 
+                href={`/blog/${post.slug}`} 
+                class="hover:text-blue-600 transition-colors"
+              >
+                {post.data.title}
+              </a>
+            </h3>
+            <p class="text-gray-600 mb-3">
+              {post.data.description}
+            </p>
+            <a 
+              href={`/blog/${post.slug}`} 
+              class="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Read more →
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center text-gray-500">
+        <p>No blog posts yet. Check back soon!</p>
+      </div>
+    )}
+    
+    <div class="text-center mt-8">
+      <a 
+        href="/blog" 
+        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+      >
+        View All Posts
+      </a>
+    </div>
+  </div>
+</section>
